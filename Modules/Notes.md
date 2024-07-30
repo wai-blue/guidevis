@@ -1,0 +1,1 @@
+Google: what are the typical core crm modules
