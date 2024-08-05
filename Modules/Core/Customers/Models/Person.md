@@ -8,47 +8,40 @@ Zoznam jednotlivcov, ktorý existujú v systéme.
 
 ## Properties
 
-| Property               | Value                               |
-| :--------------------- | :---------------------------------- |
-| isJunctionTable        | FALSE                               |
-| storeRecordInfo        | FALSE                               |
-| sqlName                | cer_persons                         |
-| urlBase                | core/customers/persons              |
-| lookupSqlValue         | concat(first_name, ', ', last_name) |
-| tableTitle             | Persons                             |
-| formTitleForInserting  | New Person                          |
-| formTitleForEditing    | Person                              |
-| crud/browse/controller | Core/Customers/Persons              |
-| crud/add/controller    | Core/Customers/Persons/Add          |
-| crud/edit/controller   | Core/Customers/Persons/{id}/Edit    |
+| Property        | Value                               |
+| :-------------- | :---------------------------------- |
+| isJunctionTable | FALSE                               |
+| storeRecordInfo | FALSE                               |
+| sqlName         | persons                             |
+| lookupSqlValue  | concat(first_name, ', ', last_name) |
 
 ## Data Scructure
 
-| Column                  | Title        | ADIOS Type | Length | Required | Notes                     |
-| ----------------------- | ------------ | ---------- | ------ | -------- | ------------------------- |
-| id                      | ID           | int        | 8      | TRUE     |                           |
-| first_name              | First Name   | varchar    |        | TRUE     | Meno                      |
-| last_name               | Last Name    | varchar    |        | TRUE     | Priezvisko                |
-| street                  | Street       | varchar    |        | FALSE    | Ulica                     |
-| postal_code             | Postal code  | varchar    |        | FALSE    | PSČ                       |
-| city                    | City         | varchar    |        | FALSE    | Mesto                     |
-| email                   | E-mail       | varchar    |        | FALSE    | E-mail                    |
-| phone_number            | Phone Number | varchar    |        | FALSE    | Telefónne číslo           |
-| company_id              | Company ID   | varchar    |        | TRUE     | IČO                       |
-| tax_id                  | TAX ID       | varchar    |        | TRUE     | DIČ                       |
-| vat_id                  | VAR ID       | varchar    |        | TRUE     | IČ DPH                    |
-| tags                    | Tags         | tags       |        | FALSE    | Značky                    |
-| id_contact_organization | Organization | lookup     |        | FALSE    | ID príslušnej organizácie |
-| note                    | Note         | textarea   |        | FALSE    | Poznámka                  |
-| is_active               | Active       | boolean    |        | TRUE     | Aktívny Kontakt?          |
+| Column                  | Title        | ADIOS Type | Length | Required |
+| ----------------------- | ------------ | ---------- | ------ | -------- |
+| id                      | ID           | int        | 8      | TRUE     |
+| first_name              | First Name   | varchar    |        | TRUE     |
+| last_name               | Last Name    | varchar    |        | TRUE     |
+| street                  | Street       | varchar    |        | FALSE    |
+| postal_code             | Postal code  | varchar    |        | FALSE    |
+| city                    | City         | varchar    |        | FALSE    |
+| email                   | E-mail       | varchar    |        | FALSE    |
+| phone_number            | Phone Number | varchar    |        | FALSE    |
+| company_id              | Company ID   | varchar    |        | TRUE     |
+| tax_id                  | TAX ID       | varchar    |        | TRUE     |
+| vat_id                  | VAR ID       | varchar    |        | TRUE     |
+| tags                    | Tags         | tags       |        | FALSE    |
+| id_contact_organization | Organization | lookup     |        | FALSE    |
+| note                    | Note         | textarea   |        | FALSE    |
+| is_active               | Active       | boolean    |        | TRUE     |
 
 ### ADIOS parameters
 
 ### Foreign Keys
 
-| Column            | Model                                                         | Relation | OnUpdate | OnDelete |
-| ----------------- | ------------------------------------------------------------- | -------- | -------- | -------- |
-| id_contact_person | [Modules\Core\Customers\Models\Organization](Organization.md) | 1:1      | Cascade  | Restrict |
+| Column            | Model                                                    | Relation | OnUpdate | OnDelete |
+| ----------------- | -------------------------------------------------------- | -------- | -------- | -------- |
+| id_contact_person | [Modules\Core\Customers\Models\Organization](Company.md) | 1:1      | Cascade  | Restrict |
 
 ### Indexes
 
