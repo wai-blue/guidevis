@@ -17,33 +17,23 @@ Zoznam kontaktných informácií.
 
 ## ENUMERATION Data Scructure
 
-| Column             | Title        | ADIOS Type | Length | Required |
-| ------------------ | ------------ | ---------- | ------ | -------- |
-| id                 | ID           | int        | 8      | TRUE     |
-| id_contact_Company | Company ID   | varchar    |        | TRUE     |
-| id_person          | Person ID    | varchar    |        | TRUE     |
-| email              | E-mail       | varchar    |        | FALSE    |
-| phone_number       | Phone Number | varchar    |        | FALSE    |
-| website            | Website      | varchar    |        | FALSE    |
-| linkedIn           | LinkedIn     | varchar    |        | FALSE    |
+| Column       | Title        | ADIOS Type | Length | Required |
+| ------------ | ------------ | ---------- | ------ | -------- |
+| id_contact   | ID           | int        |        | TRUE     |
+| email        | E-mail       | varchar    |        | FALSE    |
+| phone_number | Phone Number | varchar    |        | FALSE    |
+| website      | Website      | varchar    |        | FALSE    |
+| linkedIn     | LinkedIn     | varchar    |        | FALSE    |
+| fax          | Fax          | varchar    |        | FALSE    |
 
-<strong style="color:orange">
-Nedá sa to vytvoriť ako additional contact info alebo niečo podobné<br>
-kde by sa zvolila jedna vec z enumu ?
-</strong>
+--Malo by sa vyriešiť čo bude required, nemôže byť všetko false a treba doplniť lookup value
 
 ### ADIOS parameters
 
 ### Foreign Keys
 
-| Column     | Model                                               | Relation | OnUpdate | OnDelete |
-| ---------- | --------------------------------------------------- | -------- | -------- | -------- |
-| id_company | [Modules\Core\Customers\Models\Company](Company.md) | 1:1      | Cascade  | Restrict |
-| id_person  | [Modules\Core\Customers\Models\Person](Person.md)   | 1:1      | Cascade  | Restrict |
-
 ### Indexes
 
-| Name  |  Type   | Column + Order |
-| :---- | :-----: | -------------: |
-| id    | PRIMARY |         id ASC |
-| email | UNIQUE  |      email ASC |
+| Name       |  Type   | Column + Order |
+| :--------- | :-----: | -------------: |
+| id_contact | PRIMARY | id_contact ASC |
