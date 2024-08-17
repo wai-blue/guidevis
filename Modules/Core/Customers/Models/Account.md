@@ -11,17 +11,16 @@ Zoznam profilov, ktoré existujú v systéme.
 | Property        | Value                  |
 | :-------------- | :--------------------- |
 | isJunctionTable | FALSE                  |
-| storeRecordInfo | FALSE                  |
-| sqlName         | cer_account            |
+| sqlName         | accounts               |
 | urlBase         | core/customers/account |
-| lookupSqlValue  | id_account             |
+| lookupSqlValue  | {%TABLE%}.name         |
 
 ## Data Scructure
 
-| Column     | Title        | ADIOS Type | Length | Required |
-| ---------- | ------------ | ---------- | ------ | -------- |
-| id_account | ID           | int        |        | TRUE     |
-| name       | Account Name | varchar    |        | TRUE     |
+| Column | Title        | ADIOS Type | Length | Required |
+| ------ | ------------ | ---------- | ------ | -------- |
+| id     | ID           | int        |        | TRUE     |
+| name   | Account Name | varchar    |        | TRUE     |
 
 ## ADIOS parameters
 
@@ -29,6 +28,6 @@ Zoznam profilov, ktoré existujú v systéme.
 
 ## Indexes
 
-| Name       |  Type   | Column + Order |
-| :--------- | :-----: | -------------: |
-| id_account | PRIMARY | id_account ASC |
+| Name |  Type   | Column + Order |
+| :--- | :-----: | -------------: |
+| id   | PRIMARY |         id ASC |

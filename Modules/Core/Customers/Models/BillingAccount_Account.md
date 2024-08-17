@@ -6,19 +6,19 @@
 
 ## Properties
 
-| Property        | Value                       |
-| :-------------- | :-------------------------- |
-| isJunctionTable | FALSE                       |
-| storeRecordInfo | FALSE                       |
-| sqlName         | cer_billing_account_account |
-| lookupSqlValue  |                             |
+| Property        | Value                     |
+| :-------------- | :------------------------ |
+| isJunctionTable | TRUE                      |
+| sqlName         | billing_accounts_accounts |
+| lookupSqlValue  |                           |
 
 ## Data Scructure
 
-| Column             | Title              | ADIOS Type | Length | Required |
-| ------------------ | ------------------ | ---------- | ------ | -------- |
-| id_billing_account | ID Billing Account | int        |        | TRUE     |
-| id_account         | ID Account         | int        |        | TRUE     |
+| Column             | Title           | ADIOS Type | Length | Required |
+| ------------------ | --------------- | ---------- | ------ | -------- |
+| id                 | ID              | int        |        | TRUE     |
+| id_billing_account | Billing Account | int        |        | TRUE     |
+| id_account         | Account         | int        |        | TRUE     |
 
 ## ADIOS parameters
 
@@ -33,5 +33,6 @@
 
 | Name               |  Type   |         Column + Order |
 | :----------------- | :-----: | ---------------------: |
+| id                 | PRIMARY |                 id ASC |
 | id_account         | PRIMARY |         id_account ASC |
 | id_billing_account | PRIMARY | id_billing_account ASC |
