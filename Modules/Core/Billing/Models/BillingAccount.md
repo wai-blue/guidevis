@@ -14,12 +14,11 @@
 
 ## Data Scructure
 
-| Column       | Title                | ADIOS Type | Length | Required |
-| ------------ | -------------------- | ---------- | ------ | -------- |
-| id           | ID                   | int        |        | TRUE     |
-| name         | Billing Account Name | varchar    |        | TRUE     |
-| dic_tax_id   | TAX ID               | varchar    |        | TRUE     |
-| icdph_vat_id | VAT ID               | varchar    |        | TRUE     |
+| Column      | Title       | ADIOS Type | Length | Required |
+| ----------- | ----------- | ---------- | ------ | -------- |
+| id          | ID          | int        |        | TRUE     |
+| id_company  | Company     | lookup     |        | TRUE     |
+| description | Description | varchar    |        | TRUE     |
 
 ## ADIOS parameters
 

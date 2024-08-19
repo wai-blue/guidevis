@@ -8,18 +8,19 @@ Zoznam adries použitých v systéme.
 
 ## Properties
 
-| Property        | Value                            | notes         |
-| :-------------- | :------------------------------- | ------------- |
-| isJunctionTable | FALSE                            |               |
-| sqlName         | persons_addresses                |               |
-| urlBase         | core/customers/persons-addresses |               |
-| lookupSqlValue  | {%TABLE%}.street                 | overiť lookup |
+| Property        | Value                            |
+| :-------------- | :------------------------------- |
+| isJunctionTable | FALSE                            |
+| sqlName         | persons_addresses                |
+| urlBase         | core/customers/persons-addresses |
+| lookupSqlValue  | {%TABLE%}.street                 |
 
 ## Data Scructure
 
 | Column      | Title       | ADIOS Type | Length | Required |
 | ----------- | ----------- | ---------- | ------ | -------- |
 | id          | ID          | int        |        | TRUE     |
+| id_person   | Person      | lookup     |        | TRUE     |
 | street      | Street      | varchar    |        | TRUE     |
 | postal_code | Postal code | varchar    |        | TRUE     |
 | city        | City        | varchar    |        | TRUE     |

@@ -20,13 +20,12 @@ Zoznam aktivít, ktoré môžeme vytvoriť v systéme.
 | Column    | Title            | ADIOS Type | Length | Required | Additonal                                                                       |
 | --------- | ---------------- | ---------- | ------ | -------- | ------------------------------------------------------------------------------- |
 | id        | ID               | int        |        | TRUE     |                                                                                 |
-| type      | Activity type    | varchar    |        | TRUE     | enum_values: [custom => Custom, task => Task, meeting => Meeting, call => Call] | *
+| type      | Activity type    | varchar    |        | TRUE     | enum_values: [custom => Custom, task => Task, meeting => Meeting, call => Call] |
 | subject   | Activity subject | varchar    |        | TRUE     |                                                                                 |
 | due_date  | Due date         |            |        | TRUE     |                                                                                 |
 | due_time  | Due time         |            |        | TRUE     |                                                                                 |
 | duration  | Duration         | varchar    |        | TRUE     |                                                                                 |
 | completed | Completed        | boolean    |        | TRUE     |                                                                                 |
-
 
 ## ADIOS parameters
 
@@ -34,7 +33,6 @@ Zoznam aktivít, ktoré môžeme vytvoriť v systéme.
 
 | Column            | Model                                               | Relation | OnUpdate | OnDelete |
 | ----------------- | --------------------------------------------------- | -------- | -------- | -------- |
-
 
 ## Indexes
 
