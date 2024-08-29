@@ -1,4 +1,4 @@
-# Model Contacts/Person
+# Model Customers/Person
 
 ## Introduction
 
@@ -23,11 +23,8 @@ Zoznam jednotlivcov, ktorý existujú v systéme.
 | id_company   | Company      | lookup     |        | TRUE     |
 | first_name   | First Name   | varchar    |        | TRUE     |
 | last_name    | Last Name    | varchar    |        | TRUE     |
-| email        | E-mail       | varchar    |        | TRUE     |
-| phone_number | Phone Number | varchar    |        | FALSE    |
 | is_primary   | Is Primary   | boolean    |        | TRUE     |
-| tags         | Tags         | tags       |        | FALSE    |
-| note         | Note         | textarea   |        | FALSE    |
+| note         | Note         | text       |        | FALSE    |
 | is_active    | Active       | boolean    |        | TRUE     |
 
 ### ADIOS parameters
@@ -43,4 +40,3 @@ Zoznam jednotlivcov, ktorý existujú v systéme.
 | Name  |  Type   | Column + Order |
 | :---- | :-----: | -------------: |
 | id    | PRIMARY |         id ASC |
-| email | UNIQUE  |      email ASC |

@@ -27,12 +27,14 @@ Zoznam aktivít, ktoré môžeme vytvoriť v systéme.
 | duration  | Duration         | varchar    |        | TRUE     |                                                                                 |
 | completed | Completed        | boolean    |        | TRUE     |                                                                                 |
 
+
 ## ADIOS parameters
 
 ## Foreign Keys
 
 | Column            | Model                                               | Relation | OnUpdate | OnDelete |
 | ----------------- | --------------------------------------------------- | -------- | -------- | -------- |
+
 
 ## Indexes
 

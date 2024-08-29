@@ -6,11 +6,11 @@
 
 ## Properties
 
-| Property        | Value                        |
-| :-------------- | :--------------------------- |
-| isJunctionTable | FALSE                        |
-| sqlName         | billing_accounts             |
-| lookupSqlValue  | {%TABLE%}.id_billing_account |
+| Property        | Value            |
+| :-------------- | :--------------- |
+| isJunctionTable | FALSE            |
+| sqlName         | billing_accounts |
+| lookupSqlValue  | {%TABLE%}.id     |
 
 ## Data Scructure
 

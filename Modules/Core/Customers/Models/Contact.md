@@ -1,4 +1,4 @@
-# Model Contacts/Contact
+# Model Customers/Contact
 
 ## Introduction
 

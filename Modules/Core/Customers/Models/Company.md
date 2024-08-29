@@ -1,4 +1,4 @@
-# Model Contacts/Company
+# Model Customers/Company
 
 ## Introduction
 
@@ -17,28 +17,29 @@ Zoznam firiem, ktoré existujú v systéme.
 
 ## Data Scructure
 
-| Column      | Title        | ADIOS Type | Length | Required |
-| ----------- | ------------ | ---------- | ------ | -------- |
-| id          | ID           | int        |        | TRUE     |
-| name        | Company Name | varchar    |        | TRUE     |
-| street      | Street       | varchar    |        | TRUE     |
-| postal_code | Postal code  | varchar    |        | TRUE     |
-| city        | City         | varchar    |        | TRUE     |
-| country     | Country      | varchar    |        | TRUE     |
-| company_id  | Company ID   | int        |        | TRUE     |
-| tax_id      | Tax ID       | varchar    |        | FALSE    |
-| vat_id      | Vat ID       | varchar    |        | FALSE    |
-| tags        | Tags         | tags       |        | FALSE    |
-| note        | Note         | textarea   |        | FALSE    |
-| is_active   | Active       | boolean    |        | TRUE     |
+| Column        | Title         | ADIOS Type | Length | Required |
+| ------------- | ------------- | ---------- | ------ | -------- |
+| id            | ID            | int        |        | TRUE     |
+| id_country    | Country       | lookup     |        | TRUE     |
+| company_id    | Company ID    | varchar    |        | TRUE     |
+| name          | Company Name  | varchar    |        | TRUE     |
+| postal_code   | Postal code   | varchar    |        | TRUE     |
+| street_line_1 | Street line 1 | varchar    |        | TRUE     |
+| street_line_2 | Street line 2 | varchar    |        | FALSE    |
+| city          | City          | varchar    |        | TRUE     |
+| region        | Region        | varchar    |        | TRUE     |
+| tax_id        | Tax ID        | varchar    |        | FALSE    |
+| vat_id        | Vat ID        | varchar    |        | FALSE    |
+| note          | Note          | text       |        | FALSE    |
+| is_active     | Active        | boolean    |        | TRUE     |
 
 ## ADIOS parameters
 
 ## Foreign Keys
 
-| Column            | Model                                               | Relation | OnUpdate | OnDelete |
-| ----------------- | --------------------------------------------------- | -------- | -------- | -------- |
-| id_person_contact | [Modules\Core\Customers\Models\Person](Person.md)   | 1:1      | Cascade  | Restrict |
+| Column     | Model                                               | Relation | OnUpdate | OnDelete |
+| ---------- | --------------------------------------------------- | -------- | -------- | -------- |
+| id_country | [Modules\Core\Customers\Models\Country](Country.md) | 1:1      | Cascade  | Restrict |
 
 ## Indexes
 
