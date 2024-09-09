@@ -23,6 +23,7 @@ Zoznam adries použitých v systéme.
 | id_person   | Person      | lookup     |        | TRUE     |
 | street      | Street      | varchar    |        | TRUE     |
 | postal_code | Postal code | varchar    |        | TRUE     |
+| region      | Region      | varchar    |        | TRUE     |
 | city        | City        | varchar    |        | TRUE     |
 | country     | Country     | varchar    |        | TRUE     |
 
