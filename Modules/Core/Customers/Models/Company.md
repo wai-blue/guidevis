@@ -32,6 +32,7 @@ Zoznam firiem, ktoré existujú v systéme.
 | vat_id        | Vat ID        | varchar    |        | FALSE    |
 | note          | Note          | text       |        | FALSE    |
 | is_active     | Active        | boolean    |        | TRUE     |
+| date_created  | Date Created  | date       |        | TRUE     |
 
 ## ADIOS parameters
 
