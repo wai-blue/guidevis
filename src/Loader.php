@@ -3,9 +3,7 @@
 namespace DocsRenderer;
 
 class Loader {
-  public string $route;
   public array $env;
-  public string $book;
   public string $page;
 
   public string $pageConfigFile;
@@ -16,21 +14,16 @@ class Loader {
 
   public \Twig\Environment $twig;
 
-  public function __construct(string $route, array $env) {
+  public function __construct(string $page, array $env) {
 
-    $this->route = $route;
     $this->env = $env;
-
-    $this->book = substr($route, 0, strpos($route, '/'));
-    $this->page = substr($route, strpos($route, '/') + 1);
+    $this->page = $page;
 
     if (empty($this->page)) $this->page = 'index';
 
-    $this->pageConfigFile = $this->env['booksRootFolder'] . '/' . $this->book . '/config/' . $this->page . '.yaml';
-    $this->pageContentFile = $this->env['booksRootFolder'] . '/' . $this->book . '/content/' . $this->page . '.md';
+    $this->pageConfigFile = $this->env['bookRootFolder'] . '/config/' . $this->page . '.yaml';
+    $this->pageContentFile = $this->env['bookRootFolder'] . '/content/' . $this->page . '.md';
 
-    if (empty($this->route)) throw new \Exception("No route.");
-    if (!is_dir($this->env['booksRootFolder'] . '/' . $this->book)) throw new \Exception("Unknown book.");
     if (!is_file($this->pageConfigFile)) throw new \Exception("Page config not found.");
     if (!is_file($this->pageContentFile)) throw new \Exception("Page content not found.");
   }
@@ -40,7 +33,7 @@ class Loader {
     $this->pageContentMd = file_get_contents($this->pageContentFile);
 
     $this->twig = new \Twig\Environment(
-      new \Twig\Loader\FilesystemLoader($this->env['booksRootFolder'] . '/' . $this->book . '/templates'), // twig loader
+      new \Twig\Loader\FilesystemLoader($this->env['bookRootFolder'] . '/templates'), // twig loader
       [ 'cache' => FALSE ]
     );
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
@@ -50,8 +43,8 @@ class Loader {
   public function buildTwigParams(): array {
     $contentTemplate = $this->twig->createTemplate($this->renderPageContent());
     return [
-      'rootUrl' => $this->env['booksRootUrl'] . '/' . $this->book,
-      'header' => 'Book: '. $this->book,
+      'rootUrl' => $this->env['bookRootUrl'],
+      'header' => 'Book',
       'sidebar' => $this->pageConfig['sidebar'] ?? '',
       'content' => $this->twig->render($contentTemplate),
       'footer' => date('Y-m-d H:i:s'),
