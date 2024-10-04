@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build-help-css": "npx tailwindcss -i ./books/help/css/theme.css -o ./books/help/css/dist.css"
+  },
+  "dependencies": {
+    "tailwind": "^4.0.0"
+  }
+}
