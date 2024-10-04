@@ -5,6 +5,7 @@ namespace DocsRenderer;
 class Loader {
   public array $env;
   public string $page;
+  public array $pageData;
 
   public string $pageConfigFile;
   public string $pageContentFile;
@@ -14,10 +15,11 @@ class Loader {
 
   public \Twig\Environment $twig;
 
-  public function __construct(string $page, array $env) {
+  public function __construct(string $page, array $env, array $pageData) {
 
     $this->env = $env;
     $this->page = $page;
+    $this->pageData = $pageData;
 
     if (empty($this->page)) $this->page = 'index';
 
@@ -48,6 +50,7 @@ class Loader {
       'sidebar' => $this->pageConfig['sidebar'] ?? '',
       'content' => $this->twig->render($contentTemplate),
       'footer' => date('Y-m-d H:i:s'),
+      ...$this->pageData,
     ];
   }
 
