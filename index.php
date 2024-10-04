@@ -15,7 +15,7 @@ spl_autoload_register(function($className) {
 
 $route = $_GET['route'] ?? '';
 $options = [
-  'rewriteBase' => '/github/ceremonycrm-docs/',
+  'booksRootUrl' => '/github/ceremonycrm-docs/books',
   'booksRootFolder' => __DIR__ . '/books',
 ];
 

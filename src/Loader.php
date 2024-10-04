@@ -48,11 +48,12 @@ class Loader {
   }
 
   public function buildTwigParams(): array {
+    $contentTemplate = $this->twig->createTemplate($this->renderPageContent());
     return [
-      'rootUrl' => $this->env['rewriteBase'] . 'books/' . $this->book,
+      'rootUrl' => $this->env['booksRootUrl'] . '/' . $this->book,
       'header' => 'Book: '. $this->book,
       'sidebar' => $this->pageConfig['sidebar'] ?? '',
-      'content' => $this->renderPageContent(),
+      'content' => $this->twig->render($contentTemplate),
       'footer' => date('Y-m-d H:i:s'),
     ];
   }
