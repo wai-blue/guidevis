@@ -13,12 +13,12 @@
 
   /* template-basic */
   html.template-basic { @apply bg-slate-50; }
-  html.template-basic body { @apply bg-white text-gray-800 mx-auto; max-width: 800px; }
+  html.template-basic body { @apply bg-white text-gray-800 mx-auto; max-width: 1200px; }
 
   html.template-basic .header { @apply mb-2 shadow rounded-sm p-1; }
   html.template-basic .content-wrapper { @apply flex; }
-  html.template-basic .sidebar { @apply flex-1 w-14 shadow rounded-sm p-1 mb-2; }
-  html.template-basic .content { @apply flex-1 w-64 shadow rounded-sm p-1 mb-2; }
+  html.template-basic .sidebar { @apply flex-auto w-4 shadow rounded-sm p-1 mb-2; }
+  html.template-basic .content { @apply flex-auto w-64 shadow rounded-sm p-1 mb-2; }
   html.template-basic .footer { @apply mb-2 shadow rounded-sm p-1; }
 
   /* template-without-sidebar */
@@ -27,8 +27,8 @@
 
   html.template-without-sidebar .header { @apply mb-2 shadow rounded-sm p-1; }
   html.template-without-sidebar .content-wrapper { @apply flex; }
-  html.template-without-sidebar .sidebar { @apply flex-1 w-14 shadow rounded-sm p-1 mb-2; }
-  html.template-without-sidebar .content { @apply flex-1 w-64 shadow rounded-sm p-1 mb-2; }
+  html.template-without-sidebar .sidebar { @apply flex-auto w-14 shadow rounded-sm p-1 mb-2; }
+  html.template-without-sidebar .content { @apply flex-auto w-64 shadow rounded-sm p-1 mb-2; }
   html.template-without-sidebar .footer { @apply mb-2 shadow rounded-sm p-1; }
 
 }

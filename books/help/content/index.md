@@ -6,4 +6,4 @@
 
 This is a sample paragraph.
 
-[Sample - without sidebar](sample-without-sidebar)
+[Sample - without sidebar](subfolder/sample-without-sidebar)
