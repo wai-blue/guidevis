@@ -48,7 +48,7 @@ class Loader {
   {
     $bookConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->configFile)) ?? [];
 
-    return array_merge($bookConfig[$this->page], $this->env['defaultPageConfig'] ?? []);
+    return array_merge($this->env['defaultPageConfig'] ?? [], $bookConfig[$this->page]);
   }
 
   public function getPageVars(): array
