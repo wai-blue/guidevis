@@ -1,4 +1,14 @@
 {
+    "name": "wai-blue/guidevis",
+    "description": "Lightweight PHP library for visualizing guides",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "GuideVis\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
     "require": {
         "symfony/yaml": "^7.1",
         "erusev/parsedown": "^1.7",
