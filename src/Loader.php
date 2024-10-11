@@ -5,7 +5,6 @@ namespace WaiBlue\GuideVis;
 class Loader {
   public array $env;
   public string $page;
-  public array $pageData;
 
   public string $configFile;
   public string $pageContentFile;
@@ -15,12 +14,11 @@ class Loader {
 
   public \Twig\Environment $twig;
 
-  public function __construct(string $page, array $env, array $pageData)
+  public function __construct(string $page, array $env)
   {
 
     $this->env = $env;
     $this->page = $page;
-    $this->pageData = $pageData;
 
     if (empty($this->page)) $this->page = 'index';
 
@@ -51,14 +49,14 @@ class Loader {
     return array_merge($this->env['defaultPageConfig'] ?? [], $bookConfig[$this->page]);
   }
 
-  public function getPageVars(): array
+  public function getPageVars(array $pageData = []): array
   {
     return [
       'guideRootUrl' => $this->env['guideRootUrl'],
       'bookRootUrl' => $this->env['bookRootUrl'],
       'page' => $this->page,
       'footer' => date('Y-m-d H:i:s'),
-      'data' => $this->pageData,
+      'data' => $pageData,
     ];
   }
 
@@ -68,10 +66,10 @@ class Loader {
     return $parser->text($this->pageContentMd);
   }
 
-  public function render()
+  public function render(array $pageData = [])
   {
     $config = $this->pageConfig;
-    $vars = $this->getPageVars();
+    $vars = $this->getPageVars($pageData);
 
     $vars['elements'] = [];
     foreach ($config['elementTemplates'] ?? [] as $element => $elementTemplate) {
