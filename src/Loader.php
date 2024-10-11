@@ -7,7 +7,7 @@ class Loader {
   public string $page;
   public array $pageData;
 
-  public string $pageConfigFile;
+  public string $configFile;
   public string $pageContentFile;
 
   public array $pageConfig;
@@ -15,7 +15,8 @@ class Loader {
 
   public \Twig\Environment $twig;
 
-  public function __construct(string $page, array $env, array $pageData) {
+  public function __construct(string $page, array $env, array $pageData)
+  {
 
     $this->env = $env;
     $this->page = $page;
@@ -23,15 +24,16 @@ class Loader {
 
     if (empty($this->page)) $this->page = 'index';
 
-    $this->pageConfigFile = $this->env['bookRootFolder'] . '/config.yaml';
-    $this->pageContentFile = $this->env['bookRootFolder'] . '/content/' . $this->page . '.md';
+    $this->configFile = $this->env['bookRootFolder'] . '/config.yaml';
+    $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
 
-    if (!is_file($this->pageConfigFile)) throw new \Exception("Page config not found.");
+    if (!is_file($this->configFile)) throw new \Exception("Page config not found.");
     if (!is_file($this->pageContentFile)) throw new \Exception("Page content not found.");
   }
 
-  public function init() {
-    $this->pageConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->pageConfigFile)) ?? [];
+  public function init()
+  {
+    $this->pageConfig = $this->loadPageConfig();
     $this->pageContentMd = file_get_contents($this->pageContentFile);
 
     $this->twig = new \Twig\Environment(
@@ -42,29 +44,52 @@ class Loader {
 
   }
 
-  public function buildTwigParams(): array {
-    $contentTemplate = $this->twig->createTemplate($this->renderPageContent());
+  public function loadPageConfig()
+  {
+    $bookConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->configFile)) ?? [];
+
+    return array_merge($bookConfig[$this->page], $this->env['defaultPageConfig'] ?? []);
+  }
+
+  public function getPageVars(): array
+  {
     return [
-      'rootUrl' => $this->env['bookRootUrl'],
-      'header' => 'Book',
-      'sidebar' => $this->pageConfig['sidebar'] ?? '',
-      'content' => $this->twig->render($contentTemplate),
+      'guideRootUrl' => $this->env['guideRootUrl'],
+      'bookRootUrl' => $this->env['bookRootUrl'],
+      'page' => $this->page,
       'footer' => date('Y-m-d H:i:s'),
-      ...$this->pageData,
+      'data' => $this->pageData,
     ];
   }
 
-  public function renderPageContent() {
+  public function preparePageContentTemplate()
+  {
     $parser = new \Parsedown();
     return $parser->text($this->pageContentMd);
   }
 
-  public function render() {
-    $pageConfig = $this->pageConfig[$this->page] ?? [];
+  public function render()
+  {
+    $config = $this->pageConfig;
+    $vars = $this->getPageVars();
+
+    $vars['elements'] = [];
+    foreach ($config['elementTemplates'] ?? [] as $element => $elementTemplate) {
+      $vars['elements'][$element] = $this->twig->render(
+        'elements/' . $elementTemplate . '.twig',
+        $vars,
+      );
+    }
+    $vars['content'] = $this->twig->render(
+      $this->twig->createTemplate(
+        $this->preparePageContentTemplate()
+      ),
+      $vars
+    );
 
     return $this->twig->render(
-      ($pageConfig['template'] ?? 'no-template-configured') . '.twig',
-      $this->buildTwigParams()
+      'pages/' . $config['pageTemplate'] . '.twig',
+      $vars
     );
   }
 }
