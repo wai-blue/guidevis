@@ -1,26 +1,17 @@
 <?php
 
-require(__DIR__ . '/vendor/autoload.php');
-
-spl_autoload_register(function($className) {
-  if (str_starts_with($className, 'DocsRenderer')) {
-    $className = str_replace('\\', '/', $className);
-    $className = str_replace('DocsRenderer', '', $className);
-    $className = trim($className, '/');
-
-    require_once(__DIR__ . '/src/' . $className . '.php');
-    
-  }
-});
+require('vendor/autoload.php');
 
 $route = $_GET['route'] ?? '';
 $options = [
-  'booksRootUrl' => '/github/ceremonycrm-docs/books',
-  'booksRootFolder' => __DIR__ . '/books',
+  'bookRootFolder' => __DIR__ . '/book',
+  'bookRootUrl' => '/book',
 ];
 
+$pageData = ['randVar' => rand(1000, 9999)];
+
 try {
-  $renderer = new \DocsRenderer\Loader($route, $options);
+  $renderer = new \WaiBlue\GuideVis\Loader($route, $options, $pageData);
   $renderer->init();
   echo $renderer->render();
 } catch (\Exception $e) {

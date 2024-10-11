@@ -1,6 +1,6 @@
 <?php
 
-namespace DocsRenderer;
+namespace WaiBlue\GuideVis;
 
 class Loader {
   public array $env;
@@ -23,7 +23,7 @@ class Loader {
 
     if (empty($this->page)) $this->page = 'index';
 
-    $this->pageConfigFile = $this->env['bookRootFolder'] . '/config/' . $this->page . '.yaml';
+    $this->pageConfigFile = $this->env['bookRootFolder'] . '/config.yaml';
     $this->pageContentFile = $this->env['bookRootFolder'] . '/content/' . $this->page . '.md';
 
     if (!is_file($this->pageConfigFile)) throw new \Exception("Page config not found.");
@@ -60,8 +60,10 @@ class Loader {
   }
 
   public function render() {
+    $pageConfig = $this->pageConfig[$this->page] ?? [];
+
     return $this->twig->render(
-      ($this->pageConfig['template'] ?? 'no-template-configured') . '.twig',
+      ($pageConfig['template'] ?? 'no-template-configured') . '.twig',
       $this->buildTwigParams()
     );
   }
