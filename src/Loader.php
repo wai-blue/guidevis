@@ -9,6 +9,7 @@ class Loader {
   public string $configFile;
   public string $pageContentFile;
 
+  public array $bookConfig;
   public array $pageConfig;
   public string $pageContentMd;
 
@@ -20,7 +21,7 @@ class Loader {
     $this->env = $env;
     $this->page = $page;
 
-    if (empty($this->page)) $this->page = 'index';
+    if (empty($this->page)) $this->page = $this->env['defaultHomePage'];
 
     $this->configFile = $this->env['bookRootFolder'] . '/config.yaml';
     $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
@@ -31,6 +32,7 @@ class Loader {
 
   public function init()
   {
+    $this->bookConfig = $this->loadBookConfig();
     $this->pageConfig = $this->loadPageConfig();
     $this->pageContentMd = file_get_contents($this->pageContentFile);
 
@@ -42,11 +44,14 @@ class Loader {
 
   }
 
-  public function loadPageConfig()
+  public function loadBookConfig(): array
   {
-    $bookConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->configFile)) ?? [];
+    return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->configFile)) ?? [];
+  }
 
-    return array_merge($this->env['defaultPageConfig'] ?? [], $bookConfig[$this->page]);
+  public function loadPageConfig(): array
+  {
+    return array_merge($this->env['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
   }
 
   public function getPageVars(array $pageData = []): array
@@ -54,6 +59,7 @@ class Loader {
     return [
       'guideRootUrl' => $this->env['guideRootUrl'],
       'bookRootUrl' => $this->env['bookRootUrl'],
+      'config' => $this->bookConfig,
       'page' => $this->page,
       'footer' => date('Y-m-d H:i:s'),
       'data' => $pageData,
