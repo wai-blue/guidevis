@@ -21,18 +21,25 @@ class Loader {
     $this->env = $env;
     $this->page = $page;
 
-    if (empty($this->page)) $this->page = $this->env['defaultHomePage'];
+    if (empty($this->page)) $this->page = $this->env['homePage'];
 
     $this->configFile = $this->env['bookRootFolder'] . '/config.yaml';
     $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
 
     if (!is_file($this->configFile)) throw new \Exception("Page config not found.");
-    if (!is_file($this->pageContentFile)) throw new \Exception("Page content not found.");
   }
 
   public function init()
   {
     $this->bookConfig = $this->loadBookConfig();
+
+    $this->performRedirects();
+
+    if (!is_file($this->pageContentFile)) {
+      $this->page = $this->env['notFoundPage'];
+      $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
+    }
+
     $this->pageConfig = $this->loadPageConfig();
     $this->pageContentMd = file_get_contents($this->pageContentFile);
 
@@ -41,6 +48,7 @@ class Loader {
       [ 'cache' => FALSE ]
     );
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
+    $this->twig->addFunction(new \Twig\TwigFunction('dump', function($var) { var_dump($var); }));
 
   }
 
@@ -54,13 +62,45 @@ class Loader {
     return array_merge($this->env['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
   }
 
+  public function getPageUrl(string $page)
+  {
+    return $this->env['guideRootUrl'] . '/' . $page;
+  }
+
+  public function performRedirects()
+  {
+    if (isset($this->bookConfig['redirects'][$this->page])) {
+      $redirect = $this->bookConfig['redirects'][$this->page];
+      header('Location: ' . $this->getPageUrl($redirect['newPage']), $redirect['code']);
+    }
+  }
+
+  public function getBreadcrumbs(string $page, array $toc, array $levels = []): array
+  {
+    $parentPages = [];
+    foreach ($toc as $item) {
+      if ($item['page'] == $page) {
+        $parentPages[] = $item['page'];
+      } else if (isset($item['children']) && is_array($item['children'])) {
+        $tmp = $this->getBreadcrumbs($page, $item['children'], $levels);
+        if (count($tmp) > 0) {
+          $parentPages = array_merge([$item['page']], $tmp);
+        }
+      }
+    }
+
+    return $parentPages;
+  }
+
   public function getPageVars(array $pageData = []): array
   {
     return [
+      'env' => $this->env,
       'guideRootUrl' => $this->env['guideRootUrl'],
       'bookRootUrl' => $this->env['bookRootUrl'],
-      'config' => $this->bookConfig,
+      'bookConfig' => $this->bookConfig,
       'page' => $this->page,
+      'breadcrumbs' => $this->getBreadcrumbs($this->page, $this->bookConfig['tableOfContents'] ?? []),
       'footer' => date('Y-m-d H:i:s'),
       'data' => $pageData,
     ];
