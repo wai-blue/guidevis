@@ -94,6 +94,34 @@ class Loader {
     return $parentPages;
   }
 
+  public function getOnThisPage(string $mdContent): array
+  {
+    $lines = explode("\n", $mdContent);
+    $onThisPage = [];
+    $currentH2 = '';
+    $h3list = [];
+
+    foreach ($lines as $line) {
+      $line = trim($line);
+      if (str_starts_with($line, '## ')) {
+        if (!empty($currentH2)) {
+          $onThisPage[$currentH2] = $h3list;
+          $h3list = [];
+        }
+
+        $currentH2 = trim($line, '# ');
+      }
+
+      if (str_starts_with($line, '### ')) {
+        $h3list[] = trim($line, '# ');
+      }
+    }
+
+    $onThisPage[$currentH2] = $h3list;
+
+    return $onThisPage;
+  }
+
   public function getPageVars(array $pageData = []): array
   {
     return [
@@ -103,6 +131,7 @@ class Loader {
       'bookConfig' => $this->bookConfig,
       'page' => $this->page,
       'breadcrumbs' => $this->getBreadcrumbs($this->page, $this->bookConfig['tableOfContents'] ?? []),
+      'onThisPage' => $this->getOnThisPage($this->pageContentMd),
       'footer' => date('Y-m-d H:i:s'),
       'data' => $pageData,
     ];
