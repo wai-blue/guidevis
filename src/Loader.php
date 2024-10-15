@@ -155,12 +155,16 @@ class Loader {
         $vars,
       );
     }
-    $vars['content'] = $this->twig->render(
+ 
+    $content = $this->twig->render(
       $this->twig->createTemplate(
         $this->preparePageContentTemplate()
       ),
       $vars
     );
+    $content = preg_replace('/<h([1-9])>(.*)<\/h([1-9])>/', '<a name="$2"></a>$0', $content);
+
+    $vars['content'] = $content;
 
     return $this->twig->render(
       'pages/' . $config['pageTemplate'] . '.twig',
