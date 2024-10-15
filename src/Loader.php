@@ -81,10 +81,12 @@ class Loader {
     foreach ($toc as $item) {
       if ($item['page'] == $page) {
         $parentPages[] = $item['page'];
+          break;
       } else if (isset($item['children']) && is_array($item['children'])) {
         $tmp = $this->getBreadcrumbs($page, $item['children'], $levels);
         if (count($tmp) > 0) {
           $parentPages = array_merge([$item['page']], $tmp);
+          break;
         }
       }
     }
