@@ -49,6 +49,10 @@ class Loader {
     );
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
     $this->twig->addFunction(new \Twig\TwigFunction('dump', function($var) { var_dump($var); }));
+    $this->twig->addFunction(new \Twig\TwigFunction('markdown', function($md) {
+      $parser = new \Parsedown();
+      return $parser->text($md);
+    }));
 
   }
 
@@ -155,13 +159,12 @@ class Loader {
         $vars,
       );
     }
- 
-    $content = $this->twig->render(
-      $this->twig->createTemplate(
-        $this->preparePageContentTemplate()
-      ),
+
+    $mdParser = new \Parsedown();
+    $content = $mdParser->text($this->twig->render(
+      $this->twig->createTemplate($this->pageContentMd),
       $vars
-    );
+    ));
     $content = preg_replace('/<h([1-9])>(.*)<\/h([1-9])>/', '<a name="$2"></a>$0', $content);
 
     $vars['content'] = $content;
