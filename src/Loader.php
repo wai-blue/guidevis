@@ -35,13 +35,8 @@ class Loader {
 
     $this->performRedirects();
 
-    if (!is_file($this->pageContentFile)) {
-      $this->page = $this->env['notFoundPage'];
-      $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
-    }
-
     $this->pageConfig = $this->loadPageConfig();
-    $this->pageContentMd = file_get_contents($this->pageContentFile);
+    $this->pageContentMd = @file_get_contents($this->pageContentFile);
 
     $this->twig = new \Twig\Environment(
       new \Twig\Loader\FilesystemLoader($this->env['bookRootFolder'] . '/templates'), // twig loader
@@ -56,6 +51,12 @@ class Loader {
 
   }
 
+  public function pageExists(string $page): bool
+  {
+    return isset($this->bookConfig['pages'][$this->page]) && is_array($this->bookConfig['pages'][$this->page]);
+  }
+
+
   public function loadBookConfig(): array
   {
     return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->configFile)) ?? [];
@@ -63,7 +64,11 @@ class Loader {
 
   public function loadPageConfig(): array
   {
-    return array_merge($this->env['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
+    if (!$this->pageExists($this->page)) {
+      return $this->env['notFoundPage'];
+    } else {
+      return array_merge($this->env['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
+    }
   }
 
   public function getPageUrl(string $page)
@@ -85,7 +90,7 @@ class Loader {
     foreach ($toc as $item) {
       if ($item['page'] == $page) {
         $parentPages[] = $item['page'];
-          break;
+        break;
       } else if (isset($item['children']) && is_array($item['children'])) {
         $tmp = $this->getBreadcrumbs($page, $item['children'], $levels);
         if (count($tmp) > 0) {
