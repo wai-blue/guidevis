@@ -139,6 +139,7 @@ class Loader {
       'bookRootUrl' => $this->env['bookRootUrl'],
       'bookConfig' => $this->bookConfig,
       'page' => $this->page,
+      'pageConfig' => $this->pageConfig,
       'breadcrumbs' => $this->getBreadcrumbs($this->page, $this->bookConfig['tableOfContents'] ?? []),
       'onThisPage' => $this->getOnThisPage($this->pageContentMd),
       'footer' => date('Y-m-d H:i:s'),
