@@ -1,0 +1,48 @@
+{% macro renderSidebar(items, bookConfig, env, breadcrumbs, itemIdPrefix, level) %}
+  {% set itemCounter = 0 %}
+  {% for item in items %}
+    <li id="{{ itemIdPrefix }}_{{ itemCounter }}">
+      {% if item.children is iterable %}
+        <a href="{{ env.guideRootUrl }}/{{ item.page ?? '' }}"
+          class="{% if level == 0 %} btn {% else %} btn {% endif %} {% if breadcrumbs|last == item.page %} btn-primary {% else %} btn-transparent {% endif %} w-full"
+        >
+          {% if level == 0 %} <span class="icon"><i class="{{ item.icon }}"></i></span> {% endif %}
+          <span class="text grow">{{ bookConfig.pages[item.page].title }}</span>
+        </a>
+        <div
+          id="{{ itemIdPrefix }}_{{ itemCounter }}_{{ page }}"
+          class=""
+        >
+          <ul class="ps-4 pt-0.5 space-y-0.5">
+            {{ _self.renderSidebar(item.children, bookConfig, env, breadcrumbs, itemIdPrefix ~ "_" ~ itemCounter, level + 1) }}
+          </ul>
+        </div>
+      {% else %}
+        <a
+          href="{{ env.guideRootUrl }}/{{ item.page }}"
+          class="{% if level == 0 %} btn {% else %} btn {% endif %} {% if breadcrumbs|last == item.page %} btn-primary {% else %} btn-transparent {% endif %} w-full"
+        >
+          {% if level == 0 %} <span class="icon"><i class="{{ item.icon }}"></i></span> {% endif %}
+          <span class="text">{{ bookConfig.pages[item.page].title }}</span>
+        </a>
+      {% endif %}
+    </li>
+
+    {% set itemCounter = itemCounter + 1 %}
+  {% endfor %}
+{% endmacro %}
+
+{# https://preline.co/templates/admin/index.html #}
+
+<!-- On this page -->
+<aside class="fixed top-0 right-0 h-full w-60 bg-white z-20 hidden lg:block">
+  <div class="text-sm p-2.5 flex items-center font-semibold border-b border-slate-200"><div>On this page</div></div>
+  <div class="p-4">
+    {% for h2, h3list in onThisPage %}
+      <div class="pt-4"><a href="#{{ h2 }}">{{ h2 }}</a></div>
+      {% for h3 in h3list %}
+        <div class="text-sm ml-4 p-1"><a href="#{{ h3 }}">{{ h3 }}</a></div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</aside>

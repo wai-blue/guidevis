@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "build-css": "npx tailwindcss -i ./template/assets/css/main.twcss -o ./template/assets/css/book.css",
+    "watch-css": "npx tailwindcss --watch -i ./template/assets/css/main.twcss -o ./template/assets/css/book.css"
+  },
+  "dependencies": {
+    "preline": "^2.5.0",
+    "tailwind": "^4.0.0",
+    "tailwind-scrollbar": "^3.1.0"
+  }
+}

@@ -1,0 +1,32 @@
+{# see WaiBlue\GuideVis\Loader->getPageVars() for the list of available variables #}
+
+<html class="template-basic">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel='shortcut icon' href='{{ rootUrl }}/images/icon.png'>
+  <title>Digital Twin data eXchange standard | GuideVis | Sample guide</title>
+  <link rel="stylesheet" type="text/css" href="{{ templateRootUrl }}/assets/css/book.css">
+  <link rel="stylesheet" type="text/css" href="{{ templateRootUrl }}/assets/css/fontawesome-6.6.css">
+</head>
+<body>
+  {{ elements.header|raw }}
+  {{ elements.sidebar|raw }}
+  <!-- Content -->
+  <div class="p-8 flex-1 mb-4 ml-72 mr-4 lg:mr-60 space-y-1 text-center" style="max-width:1000px">
+    <h1 class="pt-12">Ooops!</h1>
+    <div class="text-primary text-9xl py-12"><i class="fas fa-magnifying-glass"></i></div>
+    <div>
+      This page does not exist.<br/>
+      <br/>
+      Go to <a href="{{ guideRootUrl }}/">homepage</a>.
+    </div>
+  </div>
+  {{ elements.footer|raw }}
+
+  <script src="{{ guideRootUrl }}/node_modules/preline/dist/preline.js"></script>
+</body>
+</html>

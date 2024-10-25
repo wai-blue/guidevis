@@ -1,0 +1,11 @@
+@layer base {
+  /* template-without-sidebar */
+  html.template-without-sidebar { @apply bg-slate-50; }
+  html.template-without-sidebar body { @apply bg-white text-gray-800 mx-auto; max-width: 800px; }
+
+  html.template-without-sidebar .header { @apply mb-2 shadow rounded-sm p-1; }
+  html.template-without-sidebar .content-wrapper { @apply flex; }
+  html.template-without-sidebar .sidebar { @apply flex-auto w-14 shadow rounded-sm p-1 mb-2; }
+  html.template-without-sidebar .content { @apply flex-auto w-64 shadow rounded-sm p-1 mb-2; }
+  html.template-without-sidebar .footer { @apply mb-2 shadow rounded-sm p-1; }
+}

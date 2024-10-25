@@ -1,0 +1,7 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "./theme.twcss";
+@import "./template-basic.twcss";
+@import "./template-without-sidebar.twcss";

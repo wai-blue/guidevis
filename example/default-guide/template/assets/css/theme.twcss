@@ -1,0 +1,64 @@
+@layer base {
+
+  * { @apply scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-300; }
+
+  h1 { @apply text-3xl text-slate-800; }
+  h2 { @apply text-sm font-semibold text-primary pt-20 pb-0 first-of-type:pt-4; }
+  h3 { @apply text-xl font-bold text-slate-800 pt-4 pb-2; }
+  a { @apply text-primary; }
+  a:hover { @apply underline; }
+  h2+a+h3 { @apply pt-0; }
+  h1+p { @apply text-lg text-slate-600 pb-4; }
+  p { @apply text-slate-800 pt-2 leading-6; }
+  nav ul { @apply list-none; }
+  nav li > ul { @apply p-1; }
+  ul { @apply pt-2 pl-4 list-inside list-disc; }
+  ol { @apply pl-2 list-inside list-decimal; }
+  code { @apply text-xs; }
+  code { @apply font-semibold bg-slate-100 p-1 border border-slate-200 rounded; }
+  pre { @apply bg-slate-900 text-white p-4 rounded-lg text-sm overflow-x-auto; }
+  pre code { @apply bg-transparent border-none font-normal; }
+
+  img + em { @apply text-primary; }
+
+  .btn { @apply divide-x rounded inline-flex text-left p-0 m-0 items-center bg-primary border border-transparent text-white hover:bg-secondary hover:text-white hover:no-underline; box-sizing: border-box; }
+  .btn .icon { @apply block px-2 py-1 text-sm h-full; width: 2em; text-align: center; background: #FFFFFF20; }
+  .btn .text { @apply block px-2 py-1 text-sm; }
+  .btn .text > small { @apply block text-xs text-slate-600; }
+
+  .btn.btn-transparent { @apply text-slate-800 dark:text-white bg-transparent border border-slate-100 hover:border-slate-200; }
+  .btn.btn-transparent:hover .icon { @apply bg-slate-100; }
+
+  .btn.btn-extra-small .icon { @apply text-xs px-1 py-0.5; }
+  .btn.btn-extra-small .text { @apply text-xs px-1 py-0.5; min-height: 1rem; }
+  .btn.btn-small .icon { @apply text-sm px-1.5 py-0.5; }
+  .btn.btn-small .text { @apply text-sm px-1.5 py-0.5; }
+  .btn.btn-large .icon { @apply text-lg px-2.5 py-1.5; }
+  .btn.btn-large .text { @apply text-lg px-2.5 py-1.5; }
+  .btn.btn-extra-large .icon { @apply text-2xl px-3.5 py-2; }
+  .btn.btn-extra-large .text { @apply text-2xl px-3.5 py-2; }
+
+  .btn-list-item { @apply flex rounded-none border-none shadow-none; }
+  .btn-list-item .text { @apply border-none flex-1; }
+  .btn-list-item .icon { @apply self-stretch flex items-center; }
+
+  .card { @apply border border-solid border-primary/10 shadow-sm overflow-x-auto; }
+  .card-header { @apply flex justify-between items-center font-normal shadow-sm px-2 py-1 text-primary bg-primary/10; }
+  .card-header.small { @apply text-sm p-1; }
+  /* .card-header .btn { @apply !font-normal border border-gray-300; } */
+  .card-body { @apply p-2; }
+  .card-footer { @apply flex justify-between border-t p-4; }
+
+  .image { @apply flex flex-col; width: 70%; margin: auto; }
+  .image img { @apply bg-white border border-slate-500 p-2; }
+  .image p { @apply text-slate-500 text-sm; }
+
+  .step-by-step { @apply p-0 py-12; }
+  .step-by-step .step { @apply flex gap-4 mb-2 p-1 items-start; }
+  .step-by-step .step-counter { @apply text-sm rounded-sm bg-slate-100 border border-slate-200 font-bold p-0.5 w-8 text-center; }
+  .step-by-step .step-content { @apply flex-1 border-t border-gray-300; }
+  .step-by-step .step-content .step-title { @apply font-semibold pt-2 pb-4; }
+  .step-by-step .step-content .step-description { @apply text-sm pb-2 }
+  .step-by-step .step-example { @apply flex-1 overflow-x-auto overflow-y-hidden; }
+
+}

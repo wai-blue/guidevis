@@ -1,0 +1,18 @@
+{# https://preline.co/templates/admin/index.html #}
+
+<!-- ========== HEADER ========== -->
+<header class="
+  sticky top-0 inset-x-0 flex flex-wrap
+  z-10 bg-white border-b text-sm py-2.5 ps-2
+  md:justify-start md:flex-nowrap md:ms-72
+  lg:ms-72
+  dark:bg-neutral-800 dark:border-neutral-700
+">
+  <div class="ml-2 flex items-center gap-x-2 text-gray-300">
+    <a href="{{ guideRootUrl }}"><i class="fas fa-home"></i></a> &nbsp;
+    {% for item in breadcrumbs %}
+      &raquo; <a href="{{ guideRootUrl }}/{{ item }}">{{ bookConfig.pages[item].title }}</a>
+    {% endfor %}
+  </div>
+</header>
+<!-- ========== END HEADER ========== -->

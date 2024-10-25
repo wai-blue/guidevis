@@ -1,0 +1,18 @@
+homePage: home
+redirects:
+  some-old-page:
+    newPage: some-new-page
+    code: 301
+tableOfContents:
+  - page: home
+    icon: fas fa-bolt
+    children:
+      - page: sample
+
+pages:
+  # sample-page:
+  #   pageTemplate: preline-admin/main      # optional, if not provided env.defaultPageConfig.pageTemplate will be used
+  home:
+    title: DTXS - Digital Twin data eXchange standard
+  sample:
+    title: Sample

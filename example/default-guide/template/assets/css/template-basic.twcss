@@ -1,0 +1,11 @@
+@layer base {
+  /* template-basic */
+  html.template-basic { @apply bg-slate-50; }
+  html.template-basic body { @apply bg-gradient-to-tr from-white to-slate-50; }
+
+  html.template-basic .header { @apply mb-2 shadow rounded-sm p-1; }
+  html.template-basic .content-wrapper { @apply flex; margin: auto; max-width: 1200px; }
+  html.template-basic .sidebar { @apply flex-auto w-4 shadow rounded-sm p-1 mb-2; }
+  html.template-basic .content { @apply flex-auto w-64 shadow rounded-sm p-1 mb-2; }
+  html.template-basic .footer { @apply mb-2 shadow rounded-sm p-1; }
+}

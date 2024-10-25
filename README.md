@@ -7,27 +7,34 @@ Lightweight library for visualizing guides:
   * support FAQs
   * ...
 
-# Requires
+# Prerequisities
 
   * PHP 8.x
   * Tailwind (`npm i tailwind`)
 
 # How to create own guide
 
-To create own guide, install the guidevis with composer (`composer require guidevis`) and create following folder structure in the same folder where you installed guidevis:
+## Step 1: Initialize project's folder
 
-  * book/
-    * assets/
-      * images/
-    * content/
-      * pages/
-    * config.yaml
-  * template/
-    * pages/
-    * elements/
+We recommend you to start with the default configuration. Copy the contents of [default guide](example/default-guide) folder into `/var/www/html/my-first-guide`.
 
-# How to create new page
+## Step 2: Install required components
 
-  * add page to config.yaml:pages
-  * add page to config.yaml:tableOfContents, if required
-  * create book/content/pages/PAGE_NAME.md file and write page content here in Markdown format
+In `/var/www/html/my-first-guide` run:
+
+  * `composer require guidevis`
+  * `npm i tailwind`
+  * `npm build-css`
+
+## Step 3: Open the guide in browser
+
+In your favourite browser navigate to `https://localhost/my-first-guide`.
+
+# Step 4: Create your content
+
+Guide content is located in `/var/www/html/my-first-guide/book/content`. It has two subfolders:
+
+  * `assets` folder contains all assets (mostly images) you will need for your guide
+  * `pages` folder contains the Markdown-formatted content of the pages. Check out the [sample.md](example/default-guide/book/content/pages/sample.md) for examples on how to create your own content.
+
+
