@@ -14,18 +14,20 @@ Lightweight library for visualizing guides:
 
 # How to create own guide
 
-To create own guide, install the guidevis with composer (`composer required guidevis`) and create following folder structure in the same folder where you installed guidevis:
+To create own guide, install the guidevis with composer (`composer require guidevis`) and create following folder structure in the same folder where you installed guidevis:
 
   * book/
-    * content/
+    * assets/
       * images/
+    * content/
       * pages/
-    * templates/
-      * pages/
-      * elements/
+    * config.yaml
+  * template/
+    * pages/
+    * elements/
 
 # How to create new page
 
   * add page to config.yaml:pages
-  * add page to config.yaml:sidebar, if required
-  * create book/content/pages/PAGE_NAME.md file and put page content here in Markdown format
+  * add page to config.yaml:tableOfContents, if required
+  * create book/content/pages/PAGE_NAME.md file and write page content here in Markdown format
