@@ -3,43 +3,48 @@
 namespace WaiBlue\GuideVis;
 
 class Loader {
+  protected array $assetTypes = [
+    'image' => ['gif', 'png', 'jpg', 'jpeg', 'svg'],
+  ];
   public array $env;
   public string $page;
 
-  public string $configFile;
+  public string $bookConfigFile;
   public string $pageContentFile;
 
   public array $bookConfig;
   public array $pageConfig;
+  public array $templateConfig;
   public string $pageContentMd;
 
   public \Twig\Environment $twig;
 
-  public function __construct(string $page, array $env)
+  public function __construct(string $page, array $env, array $templateConfig)
   {
 
     $this->env = $env;
     $this->page = $page;
+    $this->templateConfig = $templateConfig;
 
-    if (empty($this->page)) $this->page = $this->env['homePage'];
+    $this->bookConfigFile = $this->env['bookRootFolder'] . '/config.yaml';
 
-    $this->configFile = $this->env['bookRootFolder'] . '/config.yaml';
-    $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
-
-    if (!is_file($this->configFile)) throw new \Exception("Page config not found.");
+    if (!is_file($this->bookConfigFile)) throw new \Exception("Page config not found.");
   }
 
   public function init()
   {
     $this->bookConfig = $this->loadBookConfig();
 
+    if (empty($this->page)) $this->page = $this->bookConfig['homePage'];
+
+    $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
     $this->performRedirects();
 
     $this->pageConfig = $this->loadPageConfig();
     $this->pageContentMd = @file_get_contents($this->pageContentFile);
 
     $this->twig = new \Twig\Environment(
-      new \Twig\Loader\FilesystemLoader($this->env['bookRootFolder'] . '/templates'), // twig loader
+      new \Twig\Loader\FilesystemLoader($this->env['templateRootFolder']), // twig loader
       [ 'cache' => FALSE ]
     );
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
@@ -59,15 +64,15 @@ class Loader {
 
   public function loadBookConfig(): array
   {
-    return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->configFile)) ?? [];
+    return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->bookConfigFile)) ?? [];
   }
 
   public function loadPageConfig(): array
   {
     if (!$this->pageExists($this->page)) {
-      return $this->env['notFoundPage'];
+      return $this->templateConfig['notFoundPage'];
     } else {
-      return array_merge($this->env['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
+      return array_merge($this->templateConfig['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
     }
   }
 
@@ -136,6 +141,7 @@ class Loader {
     return [
       'env' => $this->env,
       'guideRootUrl' => $this->env['guideRootUrl'],
+      'templateRootUrl' => $this->env['templateRootUrl'],
       'bookRootUrl' => $this->env['bookRootUrl'],
       'bookConfig' => $this->bookConfig,
       'page' => $this->page,
@@ -153,8 +159,33 @@ class Loader {
     return $parser->text($this->pageContentMd);
   }
 
+  public function renderAsset(string $asset) {
+    if (\str_contains($asset, '..')) return '';
+
+    $assetFile = $this->env['bookRootFolder'] . '/content/' . $asset;
+    if (!\file_exists($assetFile)) return '';
+
+    $assetType = strtolower(\pathinfo($assetFile, PATHINFO_EXTENSION));
+    if (in_array($assetType, $this->assetTypes['image'])) {
+      switch ($assetType) {
+        case "gif": $ctype="image/gif"; break;
+        case "png": $ctype="image/png"; break;
+        case "jpeg": case "jpg": $ctype="image/jpeg"; break;
+        case "svg": $ctype="image/svg+xml"; break;
+        default: return ''; break;
+      }
+
+      header('Content-type: ' . $ctype);
+      return file_get_contents($assetFile);
+    } else {
+      return '';
+    }
+  }
+
   public function render(array $pageData = [])
   {
+    if (\str_starts_with($this->page, 'assets')) return $this->renderAsset($this->page);
+
     $config = $this->pageConfig;
     $vars = $this->getPageVars($pageData);
 
