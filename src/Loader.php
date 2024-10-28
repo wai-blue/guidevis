@@ -10,12 +10,13 @@ class Loader {
   public string $page;
 
   public string $bookConfigFile;
-  public string $pageContentFile;
 
   public array $bookConfig;
   public array $pageConfig;
   public array $templateConfig;
   public string $pageContentMd;
+
+  public array $bookIndex;
 
   public \Twig\Environment $twig;
 
@@ -37,11 +38,10 @@ class Loader {
 
     if (empty($this->page)) $this->page = $this->bookConfig['homePage'];
 
-    $this->pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $this->page . '.md';
     $this->performRedirects();
 
     $this->pageConfig = $this->loadPageConfig();
-    $this->pageContentMd = @file_get_contents($this->pageContentFile);
+    $this->pageContentMd = $this->getPageContent($this->page);
 
     $this->twig = new \Twig\Environment(
       new \Twig\Loader\FilesystemLoader($this->env['templateRootFolder']), // twig loader
@@ -59,6 +59,12 @@ class Loader {
   public function pageExists(string $page): bool
   {
     return isset($this->bookConfig['pages'][$page]) && is_array($this->bookConfig['pages'][$page]);
+  }
+
+  public function getPageContent(string $page): string
+  {
+    $pageContentFile = $this->env['bookRootFolder'] . '/content/pages/' . $page . '.md';
+    return is_file($pageContentFile) ? file_get_contents($pageContentFile) : '';
   }
 
   public function loadPagesFromContent(string $contentFolder, string $pagePrefix = ''): array
@@ -102,6 +108,31 @@ class Loader {
       return $this->templateConfig['notFoundPage'];
     } else {
       return array_merge($this->templateConfig['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
+    }
+  }
+
+  public function addToBookIndex(string $page, string $line, int $priority): void
+  {
+    foreach (explode(" ", trim($line)) as $word) {
+      $word = trim(strtolower($word));
+      if (!isset($this->bookIndex[$priority])) $this->bookIndex[$priority] = [];
+      if (!isset($this->bookIndex[$priority][$word])) $this->bookIndex[$priority][$word] = [];
+      $this->bookIndex[$priority][$word][] = $page;
+    }
+  }
+
+  public function buildBookIndex(): void
+  {
+    $this->bookIndex = [];
+    foreach ($this->bookConfig['pages'] as $page => $pageData) {
+      $pageContent = $this->getPageContent($page);
+      $lines = explode("\n", $pageContent);
+      foreach ($lines as $line) {
+        $line = trim($line);
+        if (\str_starts_with($line, "# ")) $this->addToBookIndex($page, trim($line, '# '), 1);
+        if (\str_starts_with($line, "## ")) $this->addToBookIndex($page, trim($line, '## '), 2);
+        if (\str_starts_with($line, "### ")) $this->addToBookIndex($page, trim($line, '### '), 3);
+      }
     }
   }
 
