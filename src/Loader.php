@@ -58,13 +58,42 @@ class Loader {
 
   public function pageExists(string $page): bool
   {
-    return isset($this->bookConfig['pages'][$this->page]) && is_array($this->bookConfig['pages'][$this->page]);
+    return isset($this->bookConfig['pages'][$page]) && is_array($this->bookConfig['pages'][$page]);
   }
 
+  public function loadPagesFromContent(string $contentFolder, string $pagePrefix = ''): array
+  {
+    $pages = [];
+
+    foreach (scandir($contentFolder) as $filename) {
+      if ($filename[0] === '.') continue;
+
+      $filePath = $contentFolder . '/' . $filename;
+
+      $pages[trim($pagePrefix . '/' . pathinfo($filename, PATHINFO_FILENAME), '/')] = [
+        'title' => pathinfo($filename, PATHINFO_FILENAME),
+      ];
+
+      if (is_dir($filePath)) {
+
+        $subPages = $this->loadPagesFromContent($filePath, $pagePrefix . '/' . $filename);
+        $pages = array_merge($pages, $subPages);
+      }
+    }
+
+    return $pages;
+  }
 
   public function loadBookConfig(): array
   {
-    return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->bookConfigFile)) ?? [];
+    $bookConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->bookConfigFile)) ?? [];
+
+    $bookConfig['pages'] = array_merge(
+      $this->loadPagesFromContent($this->env['bookRootFolder'] . '/content/pages'),
+      $bookConfig['pages'] ?? [],
+    );
+
+    return $bookConfig;
   }
 
   public function loadPageConfig(): array
