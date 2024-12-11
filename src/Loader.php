@@ -28,8 +28,6 @@ class Loader {
     $this->templateConfig = $templateConfig;
 
     $this->bookConfigFile = $this->env['bookRootFolder'] . '/config.yaml';
-
-    if (!is_file($this->bookConfigFile)) throw new \Exception("Page config not found.");
   }
 
   public function init()
@@ -107,6 +105,7 @@ class Loader {
 
   public function loadBookConfig(): array
   {
+    if (!is_file($this->bookConfigFile)) throw new \Exception("Page config not found.");
     $bookConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->bookConfigFile)) ?? [];
 
     $bookConfig['pages'] = array_merge(
