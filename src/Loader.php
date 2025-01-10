@@ -65,6 +65,15 @@ class Loader {
     return is_file($pageContentFile) ? file_get_contents($pageContentFile) : '';
   }
 
+  public function findPageInTableOfContents(string $page): array
+  {
+    $result = [];
+    foreach ($this->bookConfig['tableOfContents'] as $tocPage) {
+      if ($tocPage['page'] == $page) $result = $tocPage;
+    }
+    return $result;
+  }
+
   public function loadPagesFromContent(string $contentFolder, string $pagePrefix = ''): array
   {
     $pages = [];
@@ -108,6 +117,10 @@ class Loader {
     if (!is_file($this->bookConfigFile)) throw new \Exception("Page config not found.");
     $bookConfig = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->bookConfigFile)) ?? [];
 
+    foreach ($bookConfig['tableOfContents'] as $key => $page) {
+      if (isset($page['json'])) $bookConfig['tableOfContents'][$key] = json_decode($page['json'], true);
+    }
+
     $bookConfig['pages'] = array_merge(
       $this->loadPagesFromContent($this->env['bookRootFolder'] . '/content/pages'),
       $bookConfig['pages'] ?? [],
@@ -119,10 +132,23 @@ class Loader {
   public function loadPageConfig(): array
   {
     if (!$this->pageExists($this->page)) {
-      return $this->templateConfig['notFoundPage'];
+      $config = $this->templateConfig['notFoundPage'];
     } else {
-      return array_merge($this->templateConfig['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
+      $config = array_merge($this->templateConfig['defaultPageConfig'] ?? [], $this->bookConfig['pages'][$this->page] ?? []);
     }
+
+    $toc = [];
+    foreach ($this->bookConfig['tableOfContents'] as $key => $page) {
+      if ($page['page'] == $this->page) {
+        $toc = $page;
+        if (!empty($toc['prev'])) $toc['prevPageData'] = $this->bookConfig['pages'][$toc['prev']] ?? [];
+        if (!empty($toc['next'])) $toc['nextPageData'] = $this->bookConfig['pages'][$toc['next']] ?? [];
+      }
+    }
+
+    $config['tocData'] = $toc;
+
+    return $config;
   }
 
   public function addToBookIndex(string $page, string $line, int $priority): void
