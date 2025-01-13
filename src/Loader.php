@@ -65,13 +65,37 @@ class Loader {
     return is_file($pageContentFile) ? file_get_contents($pageContentFile) : '';
   }
 
-  public function findPageInTableOfContents(string $page): array
+  public function findPageInTableOfContents(string $page, $toc = null): array
   {
+    if ($toc === null) $toc = $this->bookConfig['tableOfContents'];
+
     $result = [];
-    foreach ($this->bookConfig['tableOfContents'] as $tocPage) {
-      if ($tocPage['page'] == $page) $result = $tocPage;
+    foreach ($toc as $tocPage) {
+      if ($tocPage['page'] == $page) {
+        $result = $tocPage;
+        break;
+      } elseif (is_array($tocPage['chilren'])) {
+        $tmpResult = $this->findPageInTableOfContents($page, $tocPage['children']);
+        if ($tmpResult !== []) {
+          $result = $tmpResult;
+          break;
+        }
+      }
     }
+
     return $result;
+  }
+
+  public function walkTableOfContents($callback, $toc = null)
+  {
+    if ($toc === null) $toc = $this->bookConfig['tableOfContents'];
+
+    foreach ($toc as $tocPage) {
+      $callback($tocPage);
+      if (isset($tocPage['children']) && is_array($tocPage['children'])) {
+        $this->walkTableOfContents($callback, $tocPage['children']);
+      }
+    }
   }
 
   public function loadPagesFromContent(string $contentFolder, string $pagePrefix = ''): array
@@ -88,7 +112,6 @@ class Loader {
       ];
 
       if (is_dir($filePath)) {
-
         $subPages = $this->loadPagesFromContent($filePath, $pagePrefix . '/' . $filename);
         $pages = array_merge($pages, $subPages);
       }
@@ -138,13 +161,22 @@ class Loader {
     }
 
     $toc = [];
-    foreach ($this->bookConfig['tableOfContents'] as $key => $page) {
+    $this->walkTableOfContents(function($page) use(&$toc) {
       if ($page['page'] == $this->page) {
         $toc = $page;
         if (!empty($toc['prev'])) $toc['prevPageData'] = $this->bookConfig['pages'][$toc['prev']] ?? [];
         if (!empty($toc['next'])) $toc['nextPageData'] = $this->bookConfig['pages'][$toc['next']] ?? [];
       }
-    }
+    });
+
+    // $toc = [];
+    // foreach ($this->bookConfig['tableOfContents'] as $key => $page) {
+    //   if ($page['page'] == $this->page) {
+    //     $toc = $page;
+    //     if (!empty($toc['prev'])) $toc['prevPageData'] = $this->bookConfig['pages'][$toc['prev']] ?? [];
+    //     if (!empty($toc['next'])) $toc['nextPageData'] = $this->bookConfig['pages'][$toc['next']] ?? [];
+    //   }
+    // }
 
     $config['tocData'] = $toc;
 
