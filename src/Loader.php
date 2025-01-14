@@ -334,7 +334,9 @@ class Loader {
       $this->twig->createTemplate($this->pageContentMd),
       $vars
     ));
-    $content = preg_replace('/<h([1-9])>(.*)<\/h([1-9])>/', '<a name="$2"></a>$0', $content);
+    $content = preg_replace('/<a href="(http.+)">/', '<a href="$1" target="_blank"><i class="fas fa-up-right-from-square" style="font-size:0.5em"></i>&nbsp;', $content);
+    $content = preg_replace('/<h2>(.*)<\/h2>/', '<h2><a name="$1" href="#$1" style="opacity:0.2;margin-right:0.2em"><i class="fas fa-link"></i></a> $1</h2>', $content);
+    // $content = preg_replace('/<h([13456])>(.*)<\/h([13456])>/', '<h$1><a name="$2" href="#$2" style="opacity:0.2;margin-right:0.2em"><i class="fas fa-link"></i></a> $2</h$1>', $content);
 
     $vars['content'] = $content;
 
