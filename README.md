@@ -2,8 +2,8 @@
 
 Lightweight library for visualizing guides:
 
-  * user guide
-  * developer guide
+  * user guides
+  * developer guides
   * support FAQs
   * ...
 
@@ -12,6 +12,7 @@ Lightweight library for visualizing guides:
 Following guides are rendered using guidevis:
 
 https://docs.wai.blue/dtxs-digital-twin-data-exchange-standard/
+
 https://developer.hubleto.com
 
 # Prerequisities
@@ -42,6 +43,6 @@ In your favourite browser navigate to `https://localhost/my-first-guide`.
 Guide content is located in `/var/www/html/my-first-guide/book/content`. It has two subfolders:
 
   * `assets` folder contains all assets (mostly images) you will need for your guide
-  * `pages` folder contains the Markdown-formatted content of the pages. Check out the [sample.md](example/default-guide/book/content/pages/sample.md) for examples on how to create your own content.
+  * `pages` folder contains the Markdown-formatted content of the pages. Check out the [sample.md](example/default-guide/book/content/pages/subpage-1.md) for examples on how to create your own content.
 
 

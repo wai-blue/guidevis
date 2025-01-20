@@ -1,4 +1,4 @@
-# Sample page
+# Sample subpage-1
 
 Learn how to create content by examples.
 
@@ -26,7 +26,7 @@ Use VSCode plugin `Markdown` by **Yu Zhang** and `Ctrl+Shift+V` shortcut to easi
 
 ### Internal link
 
-[This is a link to an internal page of the book](sample)
+[This is a link to an internal page of the book](subpage-1)
 
 ### More examples
 
