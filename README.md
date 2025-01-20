@@ -7,6 +7,13 @@ Lightweight library for visualizing guides:
   * support FAQs
   * ...
 
+# Live preview
+
+Following guides are rendered using guidevis:
+
+https://docs.wai.blue/dtxs-digital-twin-data-exchange-standard/
+https://developer.hubleto.com
+
 # Prerequisities
 
   * PHP 8.x
