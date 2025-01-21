@@ -16,6 +16,8 @@ class Loader {
   public array $templateConfig;
   public string $pageContentMd;
 
+  public array $appliedRoutes = [];
+
   public array $bookIndex;
 
   public \Twig\Environment $twig;
@@ -37,6 +39,7 @@ class Loader {
     if (empty($this->page)) $this->page = $this->bookConfig['homePage'];
 
     $this->performRedirects();
+    $this->applyRouter();
 
     $this->pageConfig = $this->loadPageConfig();
     $this->pageContentMd = $this->getPageContent($this->page);
@@ -218,6 +221,18 @@ class Loader {
     if (isset($this->bookConfig['redirects'][$this->page])) {
       $redirect = $this->bookConfig['redirects'][$this->page];
       header('Location: ' . $this->getPageUrl($redirect['newPage']), $redirect['code']);
+    }
+  }
+
+  public function applyRouter()
+  {
+    if (is_array($this->bookConfig['router'])) {
+      foreach ($this->bookConfig['router'] as $pagePattern => $page) {
+        if (preg_match($pagePattern, $this->page)) {
+          $this->appliedRoutes[$pagePattern] = $this->page;
+          $this->page = $page;
+        }
+      }
     }
   }
 
