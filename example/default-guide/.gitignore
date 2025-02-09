@@ -1,6 +1,0 @@
-vendor
-composer.lock
-node_modules
-package-lock.json
-template/assets/css/book.css
-env.php

@@ -1,44 +1,20 @@
 # GuideVis
 
-Lightweight library for visualizing guides:
+File-based (no SQL) library for various guides (user guide, developer's guide, recipe book, ...).
 
-  * user guides
-  * developer guides
-  * support FAQs
-  * ...
 
 # Live preview
 
-Following guides are rendered using guidevis:
-
 https://docs.wai.blue/dtxs-digital-twin-data-exchange-standard/
-
 https://developer.hubleto.com
 
-# Prerequisities
+# How to create guide
 
-  * PHP 8.x
-  * Tailwind (`npm i tailwind`)
+  * Copy the contents of [default guide](example/default-guide) folder into `/var/www/html/my-first-guide`.
+  * In `/var/www/html/my-first-guide` run:  `composer require guidevis`, `npm i tailwind` & * `npm build-css`
+  * In your favourite browser navigate to `https://localhost/my-first-guide`.
 
-# How to create own guide
-
-## Step 1: Initialize project's folder
-
-We recommend you to start with the default configuration. Copy the contents of [default guide](example/default-guide) folder into `/var/www/html/my-first-guide`.
-
-## Step 2: Install required components
-
-In `/var/www/html/my-first-guide` run:
-
-  * `composer require guidevis`
-  * `npm i tailwind`
-  * `npm build-css`
-
-## Step 3: Open the guide in browser
-
-In your favourite browser navigate to `https://localhost/my-first-guide`.
-
-# Step 4: Create your content
+# Create guide's content
 
 Guide content is located in `/var/www/html/my-first-guide/book/content`. It has two subfolders:
 
