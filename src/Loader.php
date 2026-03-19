@@ -22,6 +22,8 @@ class Loader {
 
   public \Twig\Environment $twig;
 
+  public bool $debugSearch = false;
+
   public function __construct(string $page, array $env, array $templateConfig)
   {
 
@@ -59,6 +61,7 @@ class Loader {
 
   public function pageExists(string $page): bool
   {
+    if ($page === '__search__') return true;
     return isset($this->bookConfig['pages'][$page]) && is_array($this->bookConfig['pages'][$page]);
   }
 
@@ -188,16 +191,22 @@ class Loader {
 
   public function addToBookIndex(string $page, string $line, int $priority): void
   {
-    foreach (explode(" ", trim($line)) as $word) {
+    $stripped = $this->stripMarkdown($line);
+    foreach (explode(" ", trim($stripped)) as $word) {
       $word = trim(strtolower($word));
+      if (empty($word)) continue;
       if (!isset($this->bookIndex[$priority])) $this->bookIndex[$priority] = [];
       if (!isset($this->bookIndex[$priority][$word])) $this->bookIndex[$priority][$word] = [];
-      $this->bookIndex[$priority][$word][] = $page;
+      $this->bookIndex[$priority][$word][] = [
+        'page' => $page,
+        'snippet' => $stripped,
+      ];
     }
   }
 
   public function buildBookIndex(): void
   {
+    if (!empty($this->bookIndex)) return;
     $this->bookIndex = [];
     foreach ($this->bookConfig['pages'] as $page => $pageData) {
       $pageContent = $this->getPageContent($page);
@@ -205,8 +214,9 @@ class Loader {
       foreach ($lines as $line) {
         $line = trim($line);
         if (\str_starts_with($line, "# ")) $this->addToBookIndex($page, trim($line, '# '), 1);
-        if (\str_starts_with($line, "## ")) $this->addToBookIndex($page, trim($line, '## '), 2);
-        if (\str_starts_with($line, "### ")) $this->addToBookIndex($page, trim($line, '### '), 3);
+        elseif (\str_starts_with($line, "## ")) $this->addToBookIndex($page, trim($line, '## '), 2);
+        elseif (\str_starts_with($line, "### ")) $this->addToBookIndex($page, trim($line, '### '), 3);
+        elseif (!empty($line)) $this->addToBookIndex($page, $line, 4); // body text
       }
     }
   }
@@ -331,6 +341,13 @@ class Loader {
 
   public function render(array $pageData = [])
   {
+    if ($this->page === '__search__') {
+        $query = $_GET['q'] ?? '';
+        $pageData['searchResults'] = $this->search($query);
+        $pageData['query'] = $query;
+        $pageData['debugSearch'] = $this->debugSearch;
+    }
+    
     if (\str_starts_with($this->page, 'assets')) return $this->renderAsset($this->page);
 
     $config = $this->pageConfig;
@@ -360,4 +377,256 @@ class Loader {
       $vars
     );
   }
+
+  public function search(string $query): array
+  {
+    $this->buildBookIndex();
+
+    $query = strtolower(trim($query));
+
+    if (empty($query)) return [];
+
+    $stopwords = ['the', 'a', 'an', 'is', 'are', 'was', 'and', 'or', 'in', 'to', 'of', 'for', 'with', 'on', 'at'];
+    $queryWords = array_values(array_filter(explode(' ', $query), fn($w) => strlen($w) >= 2 && !in_array($w, $stopwords)));
+    if (empty($queryWords)) return [];
+
+    // first find all pages that contain ALL query words
+    $matchingPages = null;
+
+    foreach ($queryWords as $queryWord) {
+      $pagesWithThisWord = [];
+      foreach ($this->bookIndex as $priority => $words) {
+        foreach ($words as $word => $items) {
+          if (str_contains($word, $queryWord)) {
+            foreach ($items as $item) {
+              $pagesWithThisWord[$item['page']] = true;
+            }
+          }
+        }
+      }
+      if ($matchingPages === null) {
+        $matchingPages = $pagesWithThisWord;
+      } else {
+        $matchingPages = array_intersect_key($matchingPages, $pagesWithThisWord);
+      }
+    }
+
+    // exclude source-code pages
+    $matchingPages = array_filter(
+      $matchingPages,
+      fn($v, $k) => !str_starts_with($k, 'source-code/'),
+      ARRAY_FILTER_USE_BOTH
+    );
+
+    $results = [];
+    foreach (array_keys($matchingPages) as $page) {
+      $title = $this->bookConfig['pages'][$page]['title'] ?? $page;
+
+      // highlight title
+      $titleDisplay = $title;
+      if (stripos($titleDisplay, $query) !== false) {
+        $titleDisplay = preg_replace(
+          '/(' . preg_quote($query, '/') . ')/i',
+          '<mark style="background-color:#bbf7d0;font-weight:bold;padding:1px 4px;border-radius:3px;color:#14532d;">$1</mark>',
+          $titleDisplay
+        );
+      } else {
+        foreach ($queryWords as $hw) {
+          $titleDisplay = preg_replace(
+            '/(' . preg_quote($hw, '/') . ')/i',
+            '<mark style="background-color:#fef08a;font-weight:bold;padding:1px 4px;border-radius:3px;color:#1e3a5f;">$1</mark>',
+            $titleDisplay
+          );
+        }
+      }
+
+      // collect unique matching lines for this page
+      $matchingLines = [];
+      foreach ($this->bookIndex as $priority => $words) {
+        foreach ($words as $word => $items) {
+          // check if this word matches ANY query word
+          $wordMatches = false;
+          foreach ($queryWords as $queryWord) {
+            if (str_contains($word, $queryWord)) {
+              $wordMatches = true;
+              break;
+            }
+          }
+          if (!$wordMatches) continue;
+          
+          foreach ($items as $item) {
+            if ($item['page'] !== $page) continue;
+            $lineKey = md5($item['snippet']);
+            if (!isset($matchingLines[$lineKey])) {
+              $matchingLines[$lineKey] = [
+                'snippet' => $item['snippet'],
+                'priority' => $priority,
+              ];
+            } else if ($priority < $matchingLines[$lineKey]['priority']) {
+              $matchingLines[$lineKey]['priority'] = $priority;
+            }
+          }
+        }
+      }
+
+      // best priority = best among matching lines
+      $bestPriority = 4;
+      foreach ($matchingLines as $lineData) {
+        if ($lineData['priority'] < $bestPriority) {
+          $bestPriority = $lineData['priority'];
+        }
+      }
+
+      // collect up to 3 snippets
+      $snippets = [];
+      foreach ($matchingLines as $lineData) {
+        if (count($snippets) >= 3) break;
+        $snippet = $lineData['snippet'];
+        $matchPos = false;
+        foreach ($queryWords as $qw) {
+          $pos = stripos($snippet, $qw);
+          if ($pos !== false) {
+            $matchPos = $pos;
+            break;
+          }
+        }
+        if ($matchPos === false) continue;
+
+        $start = max(0, $matchPos - 80);
+        $end = min(strlen($snippet), $matchPos + 80);
+        $snip = ($start > 0 ? '...' : '') . substr($snippet, $start, $end - $start) . ($end < strlen($snippet) ? '...' : '');
+
+        // skip snippet if it's the same as the title
+        $cleanSnip = trim(substr($snippet, $start, $end - $start));
+        if (strtolower($cleanSnip) === strtolower(trim($title))) continue;
+
+        if (stripos($snip, $query) !== false) {
+          $snip = preg_replace(
+            '/(' . preg_quote($query, '/') . ')/i',
+            '<mark style="background-color:#bbf7d0;font-weight:bold;padding:1px 4px;border-radius:3px;color:#14532d;">$1</mark>',
+            $snip
+          );
+        } else {
+          foreach ($queryWords as $hw) {
+            $snip = preg_replace(
+              '/(' . preg_quote($hw, '/') . ')/i',
+              '<mark style="background-color:#fef08a;font-weight:bold;padding:1px 4px;border-radius:3px;color:#1e3a5f;">$1</mark>',
+              $snip
+            );
+          }
+        }
+
+        if (!in_array($snip, $snippets)) {
+          $snippets[] = $snip;
+        }
+      }
+
+      $results[$page] = [
+        'page' => $page,
+        'title' => $title,
+        'titleDisplay' => $titleDisplay,
+        'url' => $this->getPageUrl($page),
+        'priority' => $bestPriority,
+        'snippets' => $snippets,
+        'count' => count($matchingLines),
+        'boost' => 0,
+      ];
+    }
+
+    // apply boosts
+    foreach ($results as $page => $result) {
+      $pageContent = strtolower($this->getPageContent($page));
+      $pageTitle = strtolower($result['title']);
+
+      if (str_contains($pageContent, $query)) {
+        $results[$page]['boost'] += 50;
+      }
+
+      if (str_contains($pageTitle, $query)) {
+        $results[$page]['boost'] += 200;
+      } else {
+        $allWordsInTitle = true;
+        foreach ($queryWords as $qw) {
+          if (!str_contains($pageTitle, $qw)) {
+            $allWordsInTitle = false;
+            break;
+          }
+        }
+        if ($allWordsInTitle) {
+          $results[$page]['boost'] += 100;
+        }
+      }
+
+      // //for auto generated guide in hubleto
+      // if (str_starts_with($page, 'source-code/')) {
+      //   $results[$page]['boost'] -= 1000;
+      // }
+
+    }
+
+    usort($results, function($a, $b) {
+      $priorityA = max(1, $a['priority']);
+      $priorityB = max(1, $b['priority']);
+      $scoreA = ($a['count'] * $a['count'] / $priorityA) + $a['boost'];
+      $scoreB = ($b['count'] * $b['count'] / $priorityB) + $b['boost'];
+      return $scoreB <=> $scoreA;
+    });
+
+    foreach ($results as $page => $result) {
+      $priority = max(1, $result['priority']);
+      $results[$page]['score'] = round( ($result['count'] * $result['count'] / max(1, $result['priority'])) + $result['boost'], 2 );
+    }
+
+    return array_slice($results, 0, 20);
+  }
+
+  public function stripMarkdown(string $line): string
+  {
+    // Skip ASCII art / box drawing characters
+    if (preg_match('/[║╔╗╚╝╠╣╦╩╬─│┌┐└┘├┤┬┴┼═]/', $line)) return '';
+
+    // Skip directory tree lines
+    if (preg_match('/^[├└│\s]+[─]+/', $line)) return '';
+
+    // Skip code block markers
+    if (str_starts_with($line, '```')) return '';
+    // Remove images first (before links)
+    $line = preg_replace('/!\[.*?\]\(.*?\)/', '', $line);
+    // Remove standard links - keep text
+    $line = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $line);
+    // Remove __path/url__ custom links (only those containing /)
+    $line = preg_replace('/__[^_]*\/[^_]*__/', '', $line);
+    // Remove table syntax
+    if (str_starts_with(trim($line), '|')) {
+      $line = preg_replace('/\|/', ' ', $line);
+      $line = preg_replace('/\s+/', ' ', trim($line));
+    }
+    // Remove headings
+    $line = preg_replace('/^#{1,6}\s+/', '', $line);
+    // Remove bold and italic
+    $line = preg_replace('/\*{1,3}(.*?)\*{1,3}/', '$1', $line);
+    $line = preg_replace('/_{1,3}(.*?)_{1,3}/', '$1', $line);
+    // Remove inline code
+    $line = preg_replace('/`([^`]*)`/', '$1', $line);
+    // Remove blockquotes
+    $line = preg_replace('/^>\s+/', '', $line);
+    // Clean up extra whitespace
+    $line = preg_replace('/\s+/', ' ', $line);
+
+    // For table rows, strip link URLs but keep link text
+    if (str_starts_with(trim($line), '|')) {
+      // keep link text, remove URL: [text](url) -> text
+      $line = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $line);
+      // remove custom __url__ links entirely
+      $line = preg_replace('/__[^_]*__/', '', $line);
+      // remove | separators
+      $line = preg_replace('/\|/', ' ', $line);
+      $line = preg_replace('/\s+/', ' ', trim($line));
+    }
+
+    $line = strip_tags($line);
+
+    return trim($line);
+  }
+
 }
