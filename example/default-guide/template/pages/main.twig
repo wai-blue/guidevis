@@ -18,6 +18,43 @@
   <!-- Content -->
   <div class="p-8 flex-1 mb-4 ml-72 mr-4 lg:mr-60 space-y-1" style="max-width:1000px">
     {{ content|raw }}
+      {% if data.searchResults is defined %}
+        {% if data.query %}
+          <div class="mb-6">
+            <p class="text-gray-500 text-sm">Search results for: <strong class="text-gray-800">{{ data.query }}</strong></p>
+            <p class="text-gray-400 text-xs mt-1">{{ data.searchResults|length }} result(s) found</p>
+          </div>
+
+          {% if data.searchResults|length > 0 %}
+            <ul class="space-y-4">
+              {% for result in data.searchResults %}
+                <li class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition-all">
+                  <a href="{{ result.url }}" class="text-blue-600 hover:underline font-semibold text-base">{{ result.titleDisplay|raw }}</a>
+                  {% if data.debugSearch %}
+                    <span class="text-xs text-gray-400 ml-2 font-mono">
+                      score: {{ result.score }} | count: {{ result.count }} | priority: {{ result.priority }} | boost: {{ result.boost }}
+                    </span>
+                  {% endif %}
+                  <span class="text-xs text-gray-400 ml-2">({{ result.count }} matches)</span>
+                  {% if result.snippets|length > 0 %}
+                    <div class="mt-2 space-y-1">
+                      {% for snippet in result.snippets %}
+                        <p class="text-sm text-gray-600 border-l-2 border-gray-200 pl-3">{{ snippet|raw }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-center py-12">
+              <p class="text-gray-400 text-lg">No results found for <strong>{{ data.query }}</strong></p>
+              <p class="text-gray-300 text-sm mt-2">Try different keywords</p>
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    </div>
   </div>
   {{ elements.onThisPage|raw }}
   {{ elements.footer|raw }}
