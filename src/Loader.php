@@ -226,7 +226,7 @@ class Loader {
 
   public function applyRouter()
   {
-    if (is_array($this->bookConfig['router'])) {
+    if (isset($this->bookConfig['router']) && is_array($this->bookConfig['router'])) {
       foreach ($this->bookConfig['router'] as $pagePattern => $page) {
         if (preg_match($pagePattern, $this->page)) {
           $this->appliedRoutes[$pagePattern] = $this->page;
