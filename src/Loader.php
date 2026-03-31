@@ -24,6 +24,8 @@ class Loader {
 
   public bool $debugSearch = false;
 
+  public string $searchPage = 'search';
+
   public function __construct(string $page, array $env, array $templateConfig)
   {
 
@@ -61,7 +63,7 @@ class Loader {
 
   public function pageExists(string $page): bool
   {
-    if ($page === '__search__') return true;
+    if ($page === $this->searchPage) return true;
     return isset($this->bookConfig['pages'][$page]) && is_array($this->bookConfig['pages'][$page]);
   }
 
@@ -307,6 +309,7 @@ class Loader {
       'onThisPage' => $this->getOnThisPage($this->pageContentMd),
       'footer' => date('Y-m-d H:i:s'),
       'data' => $pageData,
+      'searchPage' => $this->searchPage,
     ];
   }
 
@@ -341,7 +344,7 @@ class Loader {
 
   public function render(array $pageData = [])
   {
-    if ($this->page === '__search__') {
+    if ($this->page === $this->searchPage) {
         $query = $_GET['q'] ?? '';
         $pageData['searchResults'] = $this->search($query);
         $pageData['query'] = $query;
